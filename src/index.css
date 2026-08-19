@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Custom Bhutanese textile ribbon background */
+.bhutan-ribbon {
+  background: repeating-linear-gradient(
+    45deg,
+    #9e1b27,
+    #9e1b27 12px,
+    #d97706 12px,
+    #d97706 24px,
+    #0f172a 24px,
+    #0f172a 36px,
+    #047857 36px,
+    #047857 48px,
+    #b45309 48px,
+    #b45309 60px
+  );
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1ee;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9e1b27;
+}
