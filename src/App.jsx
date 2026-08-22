@@ -10,6 +10,7 @@ import { StatsCounter } from './components/StatsCounter';
 import { BottomCTA } from './components/BottomCTA';
 import { Footer } from './components/Footer';
 import { RoleLoginModal } from './components/RoleLoginModal';
+import { RoleDashboardModal } from './components/RoleDashboardModal';
 import { PropertyDetailModal } from './components/PropertyDetailModal';
 import { Toast } from './components/Toast';
 
@@ -47,6 +48,7 @@ const AppContent = () => {
 
       {/* Modals & Overlays */}
       <RoleLoginModal />
+      <RoleDashboardModal />
       <PropertyDetailModal />
       <Toast />
     </div>
