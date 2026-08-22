@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Fuel, Gauge, Settings, MapPin, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import { Fuel, Gauge, Settings, MapPin, ChevronLeft, ChevronRight, Heart, Scale } from 'lucide-react';
 
 export const FeaturedVehicles = () => {
-  const { vehicles, openDetail, favorites, toggleFavorite, formatCurrency } = useApp();
+  const { vehicles, openDetail, favorites, toggleFavorite, formatCurrency, compareList, toggleCompare } = useApp();
   const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -64,6 +64,7 @@ export const FeaturedVehicles = () => {
           >
             {vehicles.map((veh) => {
               const isFav = favorites.includes(veh.id);
+              const isComparing = compareList.some(i => i.id === veh.id);
 
               return (
                 <div
@@ -91,17 +92,36 @@ export const FeaturedVehicles = () => {
                       ))}
                     </div>
 
-                    {/* Wishlist Heart Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(veh.id, veh.title);
-                      }}
-                      className="absolute top-2.5 right-2.5 p-2 rounded-full bg-white/90 backdrop-blur-md text-slate-600 hover:text-red-500 shadow-sm hover:scale-110 active:scale-95 transition-all"
-                      aria-label="Save to favorites"
-                    >
-                      <Heart className={`w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : ''}`} />
-                    </button>
+                    {/* Action Pill Controls (Wishlist & Compare) */}
+                    <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10">
+                      {/* Compare Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleCompare(veh, 'vehicle');
+                        }}
+                        className={`p-2 rounded-full backdrop-blur-md shadow-sm hover:scale-110 active:scale-95 transition-all cursor-pointer ${
+                          isComparing
+                            ? 'bg-[#9e1b27] text-white'
+                            : 'bg-white/90 text-slate-700 hover:text-[#9e1b27]'
+                        }`}
+                        title="Compare specifications"
+                      >
+                        <Scale className="w-3.5 h-3.5" />
+                      </button>
+
+                      {/* Heart Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(veh.id, veh.title);
+                        }}
+                        className="p-2 rounded-full bg-white/90 backdrop-blur-md text-slate-600 hover:text-red-500 shadow-sm hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                        aria-label="Save to favorites"
+                      >
+                        <Heart className={`w-3.5 h-3.5 ${isFav ? 'fill-red-500 text-red-500' : ''}`} />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Body Content */}

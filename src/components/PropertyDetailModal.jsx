@@ -17,32 +17,26 @@ import {
   MessageCircle,
   ShieldCheck,
   Building,
-  UserCheck
+  UserCheck,
+  Sun,
+  Eye,
+  Sparkles,
+  Share2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const PropertyDetailModal = () => {
-  const { detailModal, closeDetail, formatCurrency, showToast } = useApp();
+  const { detailModal, closeDetail, formatCurrency, showToast, setLoanCalculatorOpen } = useApp();
   const [inquiryName, setInquiryName] = useState('');
   const [inquiryPhone, setInquiryPhone] = useState('');
   const [tourDate, setTourDate] = useState('2026-08-28');
   const [tourTime, setTourTime] = useState('11:00 AM');
-
-  // Mini BoB Mortgage Estimator State
-  const [loanDownpaymentPercent, setLoanDownpaymentPercent] = useState(20);
-  const [loanTenureYears, setLoanTenureYears] = useState(20);
-  const [loanInterestRate, setLoanInterestRate] = useState(8.5);
+  const [virtualTourOpen, setVirtualTourOpen] = useState(false);
 
   if (!detailModal.isOpen || !detailModal.item) return null;
 
   const item = detailModal.item;
   const isVehicle = detailModal.type === 'vehicle';
-
-  // Calculate Monthly EMI (Bank of Bhutan standard formula)
-  const principal = item.priceNu * (1 - loanDownpaymentPercent / 100);
-  const monthlyRate = (loanInterestRate / 100) / 12;
-  const totalMonths = loanTenureYears * 12;
-  const monthlyEmi = Math.round((principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1));
 
   const handleInquirySubmit = (e) => {
     e.preventDefault();
@@ -55,6 +49,12 @@ export const PropertyDetailModal = () => {
     closeDetail();
   };
 
+  const handleWhatsAppChat = () => {
+    confetti({ particleCount: 40, spread: 50 });
+    const msg = `Kuzuzangpo La! I am interested in viewing '${item.title}' (${item.location}) listed for ${formatCurrency(item.priceNu)} on Jigme Real Estate Bhutan.`;
+    window.open(`https://api.whatsapp.com/send?phone=97517123456&text=${encodeURIComponent(msg)}`, '_blank');
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
@@ -62,19 +62,33 @@ export const PropertyDetailModal = () => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Image Banner */}
-        <div className="relative aspect-[16/9] w-full bg-slate-950 flex-shrink-0 overflow-hidden">
+        <div className="relative aspect-[16/9] w-full bg-slate-950 flex-shrink-0 overflow-hidden group">
           <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
           
           {/* Close Button */}
           <button
             onClick={closeDetail}
-            className="absolute top-4 right-4 p-2 rounded-full bg-black/60 hover:bg-black text-white transition-colors cursor-pointer"
+            className="absolute top-4 right-4 p-2 rounded-full bg-black/60 hover:bg-black text-white transition-colors cursor-pointer z-10"
           >
             <X className="w-5 h-5" />
           </button>
+
+          {/* 360 Virtual Tour Button Overlay */}
+          {!isVehicle && (
+            <button
+              onClick={() => {
+                setVirtualTourOpen(!virtualTourOpen);
+                showToast('Launching 360° Virtual Panoramic View...', 'info');
+              }}
+              className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black text-white font-bold text-xs backdrop-blur-md border border-white/20 shadow-lg cursor-pointer transition-all hover:scale-105"
+            >
+              <Eye className="w-3.5 h-3.5 text-amber-400" />
+              <span>360° Virtual Tour</span>
+            </button>
+          )}
           
           {/* Badges */}
-          <div className="absolute bottom-3 left-4 flex gap-1.5">
+          <div className="absolute bottom-3 left-4 flex flex-wrap gap-1.5 z-10">
             {item.badges?.map((b, idx) => (
               <span key={idx} className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full shadow ${b.color}`}>
                 {b.text}
@@ -83,8 +97,30 @@ export const PropertyDetailModal = () => {
             <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-900/80 text-amber-300 border border-amber-400/40 backdrop-blur-md">
               ✓ Lagthram Verified
             </span>
+            {!isVehicle && (
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500/80 text-slate-950 flex items-center gap-1 backdrop-blur-md">
+                <Sun className="w-3 h-3" />
+                <span>Full Day South-Sun</span>
+              </span>
+            )}
           </div>
         </div>
+
+        {/* 360 Panoramic Simulation View */}
+        {virtualTourOpen && (
+          <div className="bg-slate-950 text-white p-4 border-b border-amber-500/30 flex items-center justify-between animate-in fade-in">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span className="text-xs font-bold">360° Himalayan Mountain Valley Panoramic Simulation</span>
+            </div>
+            <button
+              onClick={() => setVirtualTourOpen(false)}
+              className="text-xs text-amber-400 font-bold hover:underline"
+            >
+              Close 360°
+            </button>
+          </div>
+        )}
 
         {/* Modal Scroll Body */}
         <div className="p-5 sm:p-6 overflow-y-auto space-y-6 text-xs text-slate-700">
@@ -149,28 +185,22 @@ export const PropertyDetailModal = () => {
             )}
           </div>
 
-          {/* Bank of Bhutan Mortgage EMI Estimator */}
+          {/* Multi-Bank Mortgage Trigger Banner */}
           {!isVehicle && item.priceNu > 1000000 && (
-            <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 font-bold text-amber-900">
-                  <Calculator className="w-4 h-4 text-amber-700" />
-                  <span>Bank of Bhutan Housing Loan Estimator (8.5% p.a.)</span>
-                </div>
-                <span className="font-extrabold text-[#9e1b27] text-sm">
-                  {formatCurrency(monthlyEmi)} /mo EMI
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-[11px]">
+            <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/90 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Calculator className="w-5 h-5 text-amber-700" />
                 <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Down Payment (20%)</label>
-                  <span className="font-bold text-slate-800">{formatCurrency(item.priceNu * 0.2)}</span>
-                </div>
-                <div>
-                  <label className="block text-slate-600 font-semibold mb-1">Loan Tenure</label>
-                  <span className="font-bold text-slate-800">20 Years (240 Mos)</span>
+                  <h5 className="font-bold text-xs text-amber-950">Bank of Bhutan (BoB) Housing Loan</h5>
+                  <p className="text-[11px] text-amber-800">Starting at 8.5% p.a. • Up to 20-30 Years Tenure</p>
                 </div>
               </div>
+              <button
+                onClick={() => setLoanCalculatorOpen(true)}
+                className="px-3.5 py-1.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shadow cursor-pointer transition-all"
+              >
+                Calculate EMI ⤢
+              </button>
             </div>
           )}
 
@@ -196,7 +226,17 @@ export const PropertyDetailModal = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-1.5">
+              {/* Instant WhatsApp & Direct Call Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleWhatsAppChat}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow transition-all cursor-pointer"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  <span>WhatsApp</span>
+                </button>
+
                 <a
                   href={`tel:${item.agent?.phone || '+97517123456'}`}
                   className="p-2 rounded-xl bg-white border border-stone-300 text-slate-700 hover:text-[#9e1b27] hover:border-[#9e1b27] transition-colors"

@@ -14,6 +14,18 @@ export const AppProvider = ({ children }) => {
   // Currency: 'BTN' (Nu.), 'USD' ($), 'INR' (₹)
   const [currency, setCurrency] = useState('BTN');
 
+  // Theme: 'light' | 'dark'
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('jigme_theme') || 'light';
+    } catch {
+      return 'light';
+    }
+  });
+
+  // View Mode: 'grid' | 'map'
+  const [viewMode, setViewMode] = useState('grid');
+
   const [properties, setProperties] = useState(FEATURED_PROPERTIES);
   const [vehicles, setVehicles] = useState(FEATURED_VEHICLES);
   const [favorites, setFavorites] = useState(() => {
@@ -24,6 +36,16 @@ export const AppProvider = ({ children }) => {
       return ['prop-1', 'veh-1'];
     }
   });
+
+  // Side-by-Side Comparison
+  const [compareList, setCompareList] = useState([]);
+  const [compareModalOpen, setCompareModalOpen] = useState(false);
+
+  // AI Concierge
+  const [tashiAIOpen, setTashiAIOpen] = useState(false);
+
+  // Multi-Bank Loan Calculator Modal
+  const [loanCalculatorOpen, setLoanCalculatorOpen] = useState(false);
 
   // Modals
   const [loginModal, setLoginModal] = useState({
@@ -63,12 +85,26 @@ export const AppProvider = ({ children }) => {
   }, [favorites]);
 
   useEffect(() => {
+    localStorage.setItem('jigme_theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
+  useEffect(() => {
     if (currentUser) {
       localStorage.setItem('jigme_v2_user', JSON.stringify(currentUser));
     } else {
       localStorage.removeItem('jigme_v2_user');
     }
   }, [currentUser]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+    showToast(`Switched to ${theme === 'light' ? 'Himalayan Midnight Dark Mode' : 'Light Mode'}`, 'info');
+  };
 
   const showToast = (msg, type = 'success') => {
     setToastMessage({ msg, type, id: Date.now() });
@@ -125,6 +161,26 @@ export const AppProvider = ({ children }) => {
     showToast(`Filtered by ${chip}`, 'info');
   };
 
+  const toggleCompare = (item, type = 'property') => {
+    const exists = compareList.find(i => i.id === item.id);
+    if (exists) {
+      setCompareList(prev => prev.filter(i => i.id !== item.id));
+      showToast(`Removed from comparison`, 'info');
+    } else {
+      if (compareList.length >= 3) {
+        showToast('You can compare up to 3 items at a time', 'error');
+        return;
+      }
+      setCompareList(prev => [...prev, { ...item, compareType: type }]);
+      showToast(`Added "${item.title}" to Comparison Tool`, 'success');
+    }
+  };
+
+  const clearCompare = () => {
+    setCompareList([]);
+    setCompareModalOpen(false);
+  };
+
   const openRoleLogin = (roleId, isRegister = false) => {
     setLoginModal({ isOpen: true, roleId, isRegister });
     setMobileMenuOpen(false);
@@ -176,10 +232,24 @@ export const AppProvider = ({ children }) => {
         currency,
         setCurrency,
         formatCurrency,
+        theme,
+        setTheme,
+        toggleTheme,
+        viewMode,
+        setViewMode,
         properties,
         vehicles,
         favorites,
         toggleFavorite,
+        compareList,
+        toggleCompare,
+        clearCompare,
+        compareModalOpen,
+        setCompareModalOpen,
+        tashiAIOpen,
+        setTashiAIOpen,
+        loanCalculatorOpen,
+        setLoanCalculatorOpen,
         loginModal,
         openRoleLogin,
         closeRoleLogin,
