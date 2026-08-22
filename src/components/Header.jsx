@@ -18,9 +18,7 @@ import {
   CheckCircle2,
   Sparkles,
   ArrowRight,
-  BarChart3,
-  Search,
-  Compass
+  BarChart3
 } from 'lucide-react';
 
 export const Header = () => {
@@ -259,57 +257,57 @@ export const Header = () => {
       </header>
 
       {/* ========================================================================= */}
-      {/* 2. ENLARGED FLOATING GLASS CAPSULE NAVBAR (High-Visibility & Sharp Contrast) */}
+      {/* 2. TRUE LIQUID GLASS FLOATING CAPSULE NAVBAR (High-Definition Frosted Glass UI) */}
       {/* ========================================================================= */}
       <div 
         className={`fixed top-3 sm:top-4 left-0 right-0 z-50 px-3 sm:px-6 transition-all duration-500 ease-out pointer-events-none ${
           isScrolled ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-8'
         }`}
       >
-        <div className="max-w-6xl mx-auto rounded-full bg-white/95 backdrop-blur-2xl border border-white/90 shadow-[0_16px_50px_rgba(0,0,0,0.15)] py-2.5 sm:py-3 px-5 sm:px-8 flex items-center justify-between transition-all">
+        <div className="max-w-6xl mx-auto rounded-full liquid-glass-capsule py-2.5 sm:py-3 px-5 sm:px-8 flex items-center justify-between transition-all">
           
-          {/* Logo inside Floating Capsule */}
+          {/* Logo inside Floating Liquid Glass Capsule */}
           <div 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-2.5 cursor-pointer group flex-shrink-0"
           >
-            <div className="p-1 rounded-full bg-amber-50 border border-amber-200 group-hover:scale-105 transition-transform">
+            <div className="p-1 rounded-full bg-white/70 border border-white/90 shadow-2xs group-hover:scale-105 transition-transform">
               <BhutanKnot className="w-7 h-7 sm:w-8 sm:h-8" color="#9e1b27" secondaryColor="#d97706" />
             </div>
             <div className="flex items-center gap-1.5 leading-none">
-              <span className="font-display font-black text-base sm:text-lg text-[#9e1b27] tracking-tight">JIGME</span>
+              <span className="font-display font-black text-base sm:text-lg text-[#9e1b27] tracking-tight drop-shadow-2xs">JIGME</span>
               <span className="font-display font-bold text-xs sm:text-sm tracking-wider text-slate-900 uppercase">ESTATE</span>
             </div>
           </div>
 
-          {/* Capsule Center Navigation - Sharp, Clear & High Visibility */}
+          {/* Capsule Center Navigation - Crystal Clear Frosted Pills */}
           <nav className="hidden md:flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm font-bold text-slate-800">
             <button 
               onClick={() => scrollToSection('properties-section')}
-              className="px-3.5 sm:px-4 py-2 rounded-full hover:bg-rose-50 hover:text-[#9e1b27] transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2 rounded-full hover:bg-black/5 hover:text-[#9e1b27] transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <Home className="w-3.5 h-3.5 text-[#9e1b27]" />
+              <Home className="w-4 h-4 text-[#9e1b27]" />
               <span>Properties</span>
             </button>
             <button 
               onClick={() => scrollToSection('vehicles-section')}
-              className="px-3.5 sm:px-4 py-2 rounded-full hover:bg-amber-50 hover:text-amber-800 transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2 rounded-full hover:bg-black/5 hover:text-amber-800 transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <Car className="w-3.5 h-3.5 text-amber-600" />
+              <Car className="w-4 h-4 text-amber-600" />
               <span>Vehicles</span>
             </button>
             <button 
               onClick={() => scrollToSection('trust-section')}
-              className="px-3.5 sm:px-4 py-2 rounded-full hover:bg-emerald-50 hover:text-emerald-800 transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2 rounded-full hover:bg-black/5 hover:text-emerald-800 transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Why Us</span>
             </button>
             <button 
               onClick={() => scrollToSection('stats-section')}
-              className="px-3.5 sm:px-4 py-2 rounded-full hover:bg-blue-50 hover:text-blue-800 transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2 rounded-full hover:bg-black/5 hover:text-blue-800 transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <BarChart3 className="w-3.5 h-3.5 text-blue-600" />
+              <BarChart3 className="w-4 h-4 text-blue-600" />
               <span>Insights</span>
             </button>
           </nav>
@@ -317,7 +315,7 @@ export const Header = () => {
           {/* Capsule Right Auth Actions */}
           <div className="flex items-center gap-2.5 flex-shrink-0">
             {currentUser ? (
-              <div className="flex items-center gap-2 bg-stone-100 py-1.5 px-3.5 rounded-full text-xs font-bold text-slate-800">
+              <div className="flex items-center gap-2 bg-white/70 border border-white/90 py-1.5 px-3.5 rounded-full text-xs font-bold text-slate-800 shadow-2xs">
                 <button
                   onClick={() => openRoleDashboard(currentUser.roleId || 'buyer')}
                   className="flex items-center gap-1.5 cursor-pointer text-xs"
@@ -337,7 +335,7 @@ export const Header = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => openRoleLogin(null, false)}
-                  className="px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold text-slate-800 hover:text-slate-950 hover:bg-stone-100 transition-all cursor-pointer"
+                  className="px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold text-slate-800 hover:text-slate-950 bg-white/60 hover:bg-white/90 border border-white/90 shadow-2xs transition-all cursor-pointer"
                 >
                   Login
                 </button>
@@ -354,7 +352,7 @@ export const Header = () => {
             {/* Mobile Hamburger on Floating Capsule */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="md:hidden p-2 rounded-full bg-stone-100 text-slate-800 hover:text-[#9e1b27] cursor-pointer"
+              className="md:hidden p-2 rounded-full bg-white/70 border border-white/90 text-slate-800 hover:text-[#9e1b27] cursor-pointer shadow-2xs"
               aria-label="Open menu"
             >
               <Menu className="w-4 h-4" />
