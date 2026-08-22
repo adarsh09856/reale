@@ -111,17 +111,27 @@ export const TashiAIChatModal = () => {
 
   return (
     <>
-      {/* Floating Tashi AI Trigger Button */}
+      {/* Floating Tashi AI Circular Bubble Trigger */}
       <button
         onClick={() => setTashiAIOpen(true)}
-        className="fixed bottom-6 left-6 z-40 group flex items-center gap-2 py-3 px-4 sm:px-5 rounded-full bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 text-slate-950 font-black text-xs sm:text-sm shadow-2xl shadow-amber-500/40 border border-amber-300 backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer animate-in fade-in slide-in-from-bottom-6"
+        className="fixed bottom-5 sm:bottom-6 left-5 sm:left-6 z-40 group w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-[#0f172a] via-slate-900 to-[#1e293b] text-amber-400 p-2.5 shadow-2xl shadow-black/40 border-2 border-amber-400/80 hover:border-amber-300 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer animate-in fade-in"
         aria-label="Ask Tashi AI Concierge"
+        title="Ask Tashi AI Concierge"
       >
-        <div className="w-6 h-6 rounded-full bg-slate-950 flex items-center justify-center p-1 text-amber-400 group-hover:rotate-12 transition-transform">
+        <div className="w-full h-full flex items-center justify-center group-hover:rotate-12 transition-transform">
           <BhutanKnot className="w-full h-full" color="#f59e0b" secondaryColor="#ef4444" />
         </div>
-        <span className="font-display font-extrabold tracking-wide">Ask Tashi AI</span>
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+        
+        {/* Pulsing Online Indicator Dot */}
+        <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-slate-900 shadow-sm flex items-center justify-center">
+          <span className="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
+        </span>
+
+        {/* Hover Tooltip */}
+        <span className="hidden sm:group-hover:flex items-center gap-1.5 absolute left-full ml-3 px-3 py-1.5 bg-slate-900/95 text-amber-300 font-bold text-xs rounded-xl shadow-xl whitespace-nowrap border border-amber-400/40 backdrop-blur-md animate-in fade-in slide-in-from-left-2 pointer-events-none">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <span>Ask Tashi AI</span>
+        </span>
       </button>
 
       {/* AI Chat Modal Dialog */}
