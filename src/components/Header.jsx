@@ -59,7 +59,9 @@ export const Header = () => {
 
             <div className="hidden md:flex items-center gap-1.5 text-slate-500">
               <MapPin className="w-3.5 h-3.5 text-slate-400" />
-              <span>Norzin Lam, Thimphu, Bhutan</span>
+              <span>Norzin Lam, Thimphu</span>
+              <span className="text-stone-300 mx-1">|</span>
+              <span className="text-amber-700 font-semibold bg-amber-100 px-2 py-0.5 rounded text-[10px] border border-amber-300/60">Dev: Adarsh</span>
             </div>
           </div>
 

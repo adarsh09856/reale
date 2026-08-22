@@ -2,6 +2,7 @@
   "name": "jigme-bhutan-realestate-v2",
   "private": true,
   "version": "1.0.0",
+  "author": "Adarsh",
   "type": "module",
   "scripts": {
     "dev": "vite",
