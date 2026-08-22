@@ -76,17 +76,17 @@ export const Header = () => {
         <BhutanPattern className="h-3 sm:h-3.5 w-full shadow-xs" />
 
         {/* Modern Frosted Micro-Bar: Contact, Location, Currency & Language */}
-        <div className="bg-[#FAF8F5] border-b border-stone-200/80 py-2 px-4 sm:px-8 text-xs text-slate-600">
+        <div className="bg-[#FAF8F5] border-b border-stone-200/80 py-1.5 sm:py-2 px-3 sm:px-8 text-xs text-slate-600">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             
             {/* Left Contact & Location Info */}
-            <div className="flex items-center space-x-3 sm:space-x-8">
+            <div className="flex items-center space-x-2 sm:space-x-8">
               <a 
                 href="tel:+97517123456" 
-                className="flex items-center gap-2 hover:text-[#9e1b27] font-semibold transition-colors text-xs text-slate-700"
+                className="flex items-center gap-1.5 hover:text-[#9e1b27] font-semibold transition-colors text-[11px] sm:text-xs text-slate-700"
               >
-                <div className="w-5 h-5 rounded-full bg-rose-100/80 flex items-center justify-center text-[#9e1b27]">
-                  <Phone className="w-3 h-3" />
+                <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-rose-100/80 flex items-center justify-center text-[#9e1b27]">
+                  <Phone className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                 </div>
                 <span>+975 17 123456</span>
               </a>
@@ -98,16 +98,16 @@ export const Header = () => {
             </div>
 
             {/* Right Controls: Currency & Language Switchers */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               {/* Currency Selector Pill */}
               <div className="relative">
                 <button
                   onClick={() => setCurrencyOpen(!currencyOpen)}
-                  className="flex items-center gap-1.5 py-1 px-3 rounded-full bg-white border border-stone-200/90 hover:border-amber-400 text-slate-700 font-bold transition-all text-xs cursor-pointer shadow-2xs"
+                  className="flex items-center gap-1 py-0.5 sm:py-1 px-2.5 sm:px-3 rounded-full bg-white border border-stone-200/90 hover:border-amber-400 text-slate-700 font-bold transition-all text-[11px] sm:text-xs cursor-pointer shadow-2xs"
                 >
-                  <Globe className="w-3.5 h-3.5 text-amber-600" />
+                  <Globe className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-600" />
                   <span>{currency === 'BTN' ? 'Nu. (BTN)' : currency === 'USD' ? '$ (USD)' : '₹ (INR)'}</span>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
+                  <ChevronDown className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-400" />
                 </button>
 
                 {currencyOpen && (
@@ -140,7 +140,7 @@ export const Header = () => {
               </div>
 
               {/* Language Selector Pill */}
-              <div className="flex items-center gap-1.5 py-1 px-3 rounded-full bg-white border border-stone-200/90 text-slate-800 font-bold text-xs shadow-2xs">
+              <div className="flex items-center gap-1 py-0.5 sm:py-1 px-2.5 rounded-full bg-white border border-stone-200/90 text-slate-800 font-bold text-[11px] sm:text-xs shadow-2xs">
                 <span>🇧🇹</span>
                 <span>EN</span>
               </div>
@@ -150,26 +150,26 @@ export const Header = () => {
         </div>
 
         {/* Main Navbar: Logo + Desktop Links + Auth Actions */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between">
           
           {/* Brand Logo & Royal Title */}
           <div 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-3.5 cursor-pointer group"
+            className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
           >
-            <div className="p-1.5 rounded-2xl bg-amber-50 border border-amber-200 group-hover:border-amber-400 group-hover:scale-105 transition-all shadow-2xs">
-              <BhutanKnot className="w-9 h-9 sm:w-10 sm:h-10" color="#9e1b27" secondaryColor="#d97706" />
+            <div className="p-1 sm:p-1.5 rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200 group-hover:border-amber-400 group-hover:scale-105 transition-all shadow-2xs flex-shrink-0">
+              <BhutanKnot className="w-8 h-8 sm:w-10 sm:h-10" color="#9e1b27" secondaryColor="#d97706" />
             </div>
             <div>
-              <div className="flex items-center gap-2 leading-none">
-                <span className="font-display font-black text-2xl sm:text-3xl text-[#9e1b27] tracking-tight">
+              <div className="flex items-center gap-1.5 sm:gap-2 leading-none">
+                <span className="font-display font-black text-xl sm:text-2xl md:text-3xl text-[#9e1b27] tracking-tight">
                   JIGME
                 </span>
-                <span className="font-display font-extrabold text-sm sm:text-lg tracking-widest text-slate-900 uppercase">
+                <span className="font-display font-extrabold text-xs sm:text-sm md:text-lg tracking-widest text-slate-900 uppercase">
                   REAL ESTATE
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 font-medium tracking-tight mt-1 hidden sm:block">
+              <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium tracking-tight mt-0.5 sm:mt-1 hidden sm:block">
                 Kingdom of Bhutan's Premier Certified Marketplace
               </p>
             </div>
@@ -226,13 +226,13 @@ export const Header = () => {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => openRoleLogin(null, false)}
-                  className="px-6 py-2.5 rounded-xl border border-stone-300 hover:border-slate-800 text-xs font-bold text-slate-800 hover:bg-stone-50 transition-all cursor-pointer shadow-2xs"
+                  className="px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl border border-stone-300 hover:border-slate-800 text-xs font-bold text-slate-800 hover:bg-stone-50 transition-all cursor-pointer shadow-2xs"
                 >
                   Login
                 </button>
                 <button
                   onClick={() => openRoleLogin(null, true)}
-                  className="px-7 py-2.5 rounded-xl bg-gradient-to-r from-[#9e1b27] to-[#80131d] hover:from-[#b91c1c] hover:to-[#9e1b27] active:scale-95 text-xs font-bold text-white shadow-md hover:shadow-xl shadow-[#9e1b27]/30 transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-6 sm:px-7 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-[#9e1b27] to-[#80131d] hover:from-[#b91c1c] hover:to-[#9e1b27] active:scale-95 text-xs font-bold text-white shadow-md hover:shadow-xl shadow-[#9e1b27]/30 transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   <span>Register</span>
                   <Sparkles className="w-3.5 h-3.5 text-amber-300" />
@@ -245,7 +245,7 @@ export const Header = () => {
           <div className="flex lg:hidden items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="p-2.5 rounded-2xl border border-stone-200 bg-stone-50 text-slate-800 hover:text-[#9e1b27] focus:outline-none cursor-pointer"
+              className="p-2 sm:p-2.5 rounded-xl border border-stone-200 bg-stone-50 text-slate-800 hover:text-[#9e1b27] focus:outline-none cursor-pointer"
               aria-label="Toggle navigation menu"
             >
               <Menu className="w-5 h-5" />
@@ -257,102 +257,115 @@ export const Header = () => {
       </header>
 
       {/* ========================================================================= */}
-      {/* 2. TRUE LIQUID GLASS FLOATING CAPSULE NAVBAR (High-Definition Frosted Glass UI) */}
+      {/* 2. ENLARGED FLOATING LIQUID GLASS CAPSULE NAVBAR (100% Device Friendly & Zero Overflow) */}
       {/* ========================================================================= */}
       <div 
-        className={`fixed top-3 sm:top-4 left-0 right-0 z-50 px-3 sm:px-6 transition-all duration-500 ease-out pointer-events-none ${
+        className={`fixed top-2.5 sm:top-4 left-0 right-0 z-50 px-2.5 sm:px-4 md:px-6 transition-all duration-500 ease-out pointer-events-none ${
           isScrolled ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-8'
         }`}
       >
-        <div className="max-w-6xl mx-auto rounded-full liquid-glass-capsule py-2.5 sm:py-3 px-5 sm:px-8 flex items-center justify-between transition-all">
+        <div className="w-full max-w-5xl mx-auto rounded-full liquid-glass-capsule py-2 sm:py-2.5 px-3 sm:px-6 flex items-center justify-between transition-all">
           
-          {/* Logo inside Floating Liquid Glass Capsule */}
+          {/* Logo inside Floating Capsule */}
           <div 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2.5 cursor-pointer group flex-shrink-0"
+            className="flex items-center gap-2 cursor-pointer group flex-shrink-0"
           >
-            <div className="p-1 rounded-full bg-white/70 border border-white/90 shadow-2xs group-hover:scale-105 transition-transform">
-              <BhutanKnot className="w-7 h-7 sm:w-8 sm:h-8" color="#9e1b27" secondaryColor="#d97706" />
+            <div className="p-1 rounded-full bg-white/80 border border-white/90 shadow-2xs group-hover:scale-105 transition-transform flex-shrink-0">
+              <BhutanKnot className="w-6 h-6 sm:w-7 sm:h-7" color="#9e1b27" secondaryColor="#d97706" />
             </div>
-            <div className="flex items-center gap-1.5 leading-none">
-              <span className="font-display font-black text-base sm:text-lg text-[#9e1b27] tracking-tight drop-shadow-2xs">JIGME</span>
-              <span className="font-display font-bold text-xs sm:text-sm tracking-wider text-slate-900 uppercase">ESTATE</span>
+            <div className="flex items-center gap-1 leading-none">
+              <span className="font-display font-black text-sm sm:text-base text-[#9e1b27] tracking-tight drop-shadow-2xs">JIGME</span>
+              <span className="font-display font-bold text-[11px] sm:text-xs tracking-wider text-slate-900 uppercase hidden sm:inline">ESTATE</span>
             </div>
           </div>
 
-          {/* Capsule Center Navigation - Crystal Clear Frosted Pills */}
+          {/* Capsule Center Navigation - Hidden on Mobile to avoid any squeeze, visible on md+ */}
           <nav className="hidden md:flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm font-bold text-slate-800">
             <button 
               onClick={() => scrollToSection('properties-section')}
-              className="px-4 py-2 rounded-full hover:bg-black/5 hover:text-[#9e1b27] transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-full hover:bg-black/5 hover:text-[#9e1b27] transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <Home className="w-4 h-4 text-[#9e1b27]" />
+              <Home className="w-3.5 h-3.5 text-[#9e1b27]" />
               <span>Properties</span>
             </button>
             <button 
               onClick={() => scrollToSection('vehicles-section')}
-              className="px-4 py-2 rounded-full hover:bg-black/5 hover:text-amber-800 transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-full hover:bg-black/5 hover:text-amber-800 transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <Car className="w-4 h-4 text-amber-600" />
+              <Car className="w-3.5 h-3.5 text-amber-600" />
               <span>Vehicles</span>
             </button>
             <button 
               onClick={() => scrollToSection('trust-section')}
-              className="px-4 py-2 rounded-full hover:bg-black/5 hover:text-emerald-800 transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-full hover:bg-black/5 hover:text-emerald-800 transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>Why Us</span>
             </button>
             <button 
               onClick={() => scrollToSection('stats-section')}
-              className="px-4 py-2 rounded-full hover:bg-black/5 hover:text-blue-800 transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-full hover:bg-black/5 hover:text-blue-800 transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <BarChart3 className="w-4 h-4 text-blue-600" />
+              <BarChart3 className="w-3.5 h-3.5 text-blue-600" />
               <span>Insights</span>
             </button>
           </nav>
 
-          {/* Capsule Right Auth Actions */}
-          <div className="flex items-center gap-2.5 flex-shrink-0">
+          {/* Capsule Right Auth Actions (Perfected for Mobile & Desktop) */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
             {currentUser ? (
-              <div className="flex items-center gap-2 bg-white/70 border border-white/90 py-1.5 px-3.5 rounded-full text-xs font-bold text-slate-800 shadow-2xs">
+              <div className="flex items-center gap-1.5 bg-white/70 border border-white/90 py-1 px-2.5 sm:px-3.5 rounded-full text-xs font-bold text-slate-800 shadow-2xs">
                 <button
                   onClick={() => openRoleDashboard(currentUser.roleId || 'buyer')}
-                  className="flex items-center gap-1.5 cursor-pointer text-xs"
+                  className="flex items-center gap-1.5 cursor-pointer text-[11px] sm:text-xs"
                 >
-                  <LayoutDashboard className="w-4 h-4 text-[#9e1b27]" />
-                  <span className="max-w-[110px] truncate">{currentUser.name}</span>
+                  <LayoutDashboard className="w-3.5 h-3.5 text-[#9e1b27]" />
+                  <span className="max-w-[80px] sm:max-w-[110px] truncate">{currentUser.name}</span>
                 </button>
                 <button
                   onClick={handleLogout}
                   className="p-1 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
                   title="Sign Out"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
+                  <LogOut className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => openRoleLogin(null, false)}
-                  className="px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold text-slate-800 hover:text-slate-950 bg-white/60 hover:bg-white/90 border border-white/90 shadow-2xs transition-all cursor-pointer"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => openRoleLogin(null, true)}
-                  className="px-5 sm:px-6 py-2 rounded-full bg-gradient-to-r from-[#9e1b27] to-[#80131d] hover:from-[#b91c1c] hover:to-[#9e1b27] text-xs sm:text-sm font-bold text-white shadow-md shadow-[#9e1b27]/35 hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5"
-                >
-                  <span>Register</span>
-                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                </button>
-              </div>
+              <>
+                {/* Desktop Buttons */}
+                <div className="hidden md:flex items-center gap-2">
+                  <button
+                    onClick={() => openRoleLogin(null, false)}
+                    className="px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold text-slate-800 hover:text-slate-950 bg-white/60 hover:bg-white/90 border border-white/90 shadow-2xs transition-all cursor-pointer"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => openRoleLogin(null, true)}
+                    className="px-5 py-1.5 rounded-full bg-gradient-to-r from-[#9e1b27] to-[#80131d] hover:from-[#b91c1c] hover:to-[#9e1b27] text-xs sm:text-sm font-bold text-white shadow-md shadow-[#9e1b27]/35 hover:shadow-lg transition-all cursor-pointer flex items-center gap-1.5"
+                  >
+                    <span>Register</span>
+                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  </button>
+                </div>
+
+                {/* Mobile Single Sign-In Pill (Ensures Zero Overflow) */}
+                <div className="flex md:hidden items-center gap-1">
+                  <button
+                    onClick={() => openRoleLogin(null, false)}
+                    className="px-3 py-1 rounded-full text-[11px] font-bold text-[#9e1b27] bg-white/80 border border-rose-200/80 shadow-2xs cursor-pointer"
+                  >
+                    Sign In
+                  </button>
+                </div>
+              </>
             )}
 
             {/* Mobile Hamburger on Floating Capsule */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="md:hidden p-2 rounded-full bg-white/70 border border-white/90 text-slate-800 hover:text-[#9e1b27] cursor-pointer shadow-2xs"
+              className="md:hidden p-1.5 sm:p-2 rounded-full bg-white/80 border border-white/90 text-slate-800 hover:text-[#9e1b27] cursor-pointer shadow-2xs"
               aria-label="Open menu"
             >
               <Menu className="w-4 h-4" />
