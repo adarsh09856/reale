@@ -38,7 +38,7 @@ export const TrustBar = () => {
   ];
 
   return (
-    <section className="bg-stone-50/70 border-b border-stone-200/80 py-6 px-4 sm:px-8">
+    <section id="trust-section" className="bg-stone-50/70 border-b border-stone-200/80 py-6 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5">
         {trustItems.map((item, idx) => {
           const Icon = item.icon;

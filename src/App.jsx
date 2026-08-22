@@ -12,16 +12,17 @@ import { Footer } from './components/Footer';
 import { RoleLoginModal } from './components/RoleLoginModal';
 import { RoleDashboardModal } from './components/RoleDashboardModal';
 import { PropertyDetailModal } from './components/PropertyDetailModal';
+import { BackToTop } from './components/BackToTop';
 import { Toast } from './components/Toast';
 
 const AppContent = () => {
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-white text-slate-900 selection:bg-[#9e1b27] selection:text-white">
-      {/* 1. Top Ribbon & Navbar */}
+    <div className="min-h-screen flex flex-col justify-between bg-[#FAF8F5] text-slate-900 selection:bg-[#9e1b27] selection:text-white">
+      {/* 1. Floating Capsule Header & Bhutan Ribbon */}
       <Header />
 
       <main className="flex-1">
-        {/* 2. Hero Section with Tabbed Search & Popular Chips */}
+        {/* 2. Hero Section with Tabbed Capsule Search & Popular Chips */}
         <HeroSearchSection />
 
         {/* 3. Trust Bar (4 Value Proposition Pills) */}
@@ -45,6 +46,9 @@ const AppContent = () => {
 
       {/* 9. Footer with Bhutanese Textile Ribbon */}
       <Footer />
+
+      {/* Floating Back to Top Button with Royal Bhutanese Gradient */}
+      <BackToTop />
 
       {/* Modals & Overlays */}
       <RoleLoginModal />

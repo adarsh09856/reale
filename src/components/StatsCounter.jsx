@@ -34,7 +34,7 @@ export const StatsCounter = () => {
   ];
 
   return (
-    <section className="bg-[#090d16] text-white py-10 sm:py-12 px-4 sm:px-8 border-y border-stone-800">
+    <section id="stats-section" className="bg-[#090d16] text-white py-10 sm:py-12 px-4 sm:px-8 border-y border-stone-800">
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;

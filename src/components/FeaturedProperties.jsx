@@ -23,7 +23,7 @@ export const FeaturedProperties = () => {
   };
 
   return (
-    <section className="py-12 sm:py-16 px-4 sm:px-8 bg-white border-b border-stone-200/80">
+    <section id="properties-section" className="py-12 sm:py-16 px-4 sm:px-8 bg-white border-b border-stone-200/80">
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
