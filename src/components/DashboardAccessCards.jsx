@@ -1,27 +1,66 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { DASHBOARD_ROLES } from '../data/bhutanData';
-import { Crown, User, Briefcase, Home, Users, UserPlus, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Compass, Home, Car, Calculator, ArrowRight } from 'lucide-react';
 
 export const DashboardAccessCards = () => {
-  const { openRoleLogin, openRoleDashboard, currentUser } = useApp();
+  const { openModal, openCalculatorModal } = useApp();
 
-  const getIcon = (iconName) => {
-    switch (iconName) {
-      case 'Crown':
-        return <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-[#9e1b27]" />;
-      case 'User':
-        return <User className="w-5 h-5 sm:w-6 sm:h-6 text-amber-700" />;
-      case 'Briefcase':
-        return <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-700" />;
-      case 'Home':
-        return <Home className="w-5 h-5 sm:w-6 sm:h-6 text-blue-700" />;
-      case 'Users':
-        return <Users className="w-5 h-5 sm:w-6 sm:h-6 text-purple-700" />;
-      default:
-        return <User className="w-5 h-5 sm:w-6 sm:h-6 text-slate-700" />;
+  const SERVICES = [
+    {
+      id: 'estates',
+      title: 'Luxury Estates',
+      description: 'Verified heritage villas, mountain retreats, and commercial real estate.',
+      icon: Home,
+      iconColor: 'bg-rose-50 text-[#9e1b27] border-rose-200',
+      action: 'Browse Estates',
+      handler: () => {
+        const el = document.getElementById('featured-properties');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
+    {
+      id: 'motors',
+      title: 'Certified 4x4 Motors',
+      description: 'RSTA-inspected Toyota Land Cruisers, Hilux trucks, and AWD vehicles.',
+      icon: Car,
+      iconColor: 'bg-amber-50 text-amber-700 border-amber-200',
+      action: 'Browse Motors',
+      handler: () => {
+        const el = document.getElementById('featured-vehicles');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
+    {
+      id: 'mortgage',
+      title: 'BoB Mortgage Calc',
+      description: 'Real-time interest amortization and loan eligibility estimates.',
+      icon: Calculator,
+      iconColor: 'bg-blue-50 text-blue-700 border-blue-200',
+      action: 'Calculate EMI',
+      handler: () => openCalculatorModal()
+    },
+    {
+      id: 'legal',
+      title: 'eSakor Thram Check',
+      description: 'Government certified digital title deed verification & escrow protection.',
+      icon: ShieldCheck,
+      iconColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      action: 'Learn Verification',
+      handler: () => {
+        const el = document.getElementById('trust-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
+    {
+      id: 'tours',
+      title: 'Guided Site Tours',
+      description: 'Schedule personal estate inspections with local Bhutanese specialists.',
+      icon: Compass,
+      iconColor: 'bg-purple-50 text-purple-700 border-purple-200',
+      action: 'Schedule Tour',
+      handler: () => openModal('schedule-tour', null)
     }
-  };
+  ];
 
   return (
     <section className="py-12 sm:py-16 px-4 sm:px-8 bg-[#FAF8F5]">
@@ -32,66 +71,62 @@ export const DashboardAccessCards = () => {
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="text-amber-600 text-sm font-serif">❖</span>
             <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-              Access Your Dashboard
+              Client & Investor Services
             </h2>
             <span className="text-amber-600 text-sm font-serif">❖</span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 font-medium">
-            Login as per your role to manage listings and activities
+            Certified transactions, legal title verification, and BoB mortgage escrow
           </p>
         </div>
 
-        {/* 5 Role Cards Responsive Grid */}
+        {/* 5 Service Cards Responsive Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5 mb-8 sm:mb-10">
-          {DASHBOARD_ROLES.map((role) => (
-            <div
-              key={role.id}
-              className="glass-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between text-center hover:shadow-xl hover:-translate-y-1 hover:border-amber-400/80 transition-all duration-300 group"
-            >
-              <div>
-                {/* Role Icon Circle */}
-                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${role.iconColor} border mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-2xs`}>
-                  {getIcon(role.icon)}
+          {SERVICES.map((srv) => {
+            const Icon = srv.icon;
+            return (
+              <div
+                key={srv.id}
+                className="glass-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between text-center hover:shadow-xl hover:-translate-y-1 hover:border-amber-400/80 transition-all duration-300 group bg-white border border-stone-200"
+              >
+                <div>
+                  {/* Service Icon Circle */}
+                  <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${srv.iconColor} border mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-2xs`}>
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="font-bold text-sm sm:text-base text-slate-900 mb-2">
+                    {srv.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed min-h-[36px]">
+                    {srv.description}
+                  </p>
                 </div>
 
-                {/* Role Title */}
-                <h3 className="font-bold text-sm sm:text-base text-slate-900 mb-2">
-                  {role.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed min-h-[36px]">
-                  {role.description}
-                </p>
+                {/* Action Button */}
+                <div className="mt-5 pt-3.5 border-t border-stone-100">
+                  <button
+                    onClick={srv.handler}
+                    className="w-full py-2 px-3 rounded-xl border border-stone-300 hover:border-[#9e1b27] hover:bg-rose-50 text-xs font-bold text-slate-700 hover:text-[#9e1b27] transition-all cursor-pointer shadow-2xs group-hover:bg-[#9e1b27] group-hover:text-white group-hover:border-[#9e1b27]"
+                  >
+                    {srv.action}
+                  </button>
+                </div>
               </div>
-
-              {/* Action Button */}
-              <div className="mt-5 pt-3.5 border-t border-stone-100">
-                <button
-                  onClick={() => {
-                    if (currentUser && currentUser.roleId === role.id) {
-                      openRoleDashboard(role.id);
-                    } else {
-                      openRoleLogin(role.id, false);
-                    }
-                  }}
-                  className="w-full py-2 px-3 rounded-xl border border-stone-300 hover:border-[#9e1b27] hover:bg-rose-50 text-xs font-bold text-slate-700 hover:text-[#9e1b27] transition-all cursor-pointer shadow-2xs group-hover:bg-[#9e1b27] group-hover:text-white group-hover:border-[#9e1b27]"
-                >
-                  {role.btnText}
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Center Register CTA Banner */}
         <div className="text-center">
           <button
-            onClick={() => openRoleLogin(null, true)}
+            onClick={() => openModal('register')}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-[#9e1b27] hover:bg-[#80131d] active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg shadow-[#9e1b27]/25 transition-all cursor-pointer"
           >
-            <UserPlus className="w-4 h-4" />
-            <span>New User? Register Here</span>
+            <span>Create Free Buyer / Investor Account</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>

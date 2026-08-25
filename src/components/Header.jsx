@@ -206,25 +206,12 @@ export const Header = () => {
 
           {/* Desktop Auth Controls */}
           <div className="hidden md:flex items-center gap-2.5">
-            {/* Admin Panel Quick Access Switcher */}
-            <button
-              onClick={() => setIsAdminView(true)}
-              className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-black text-amber-300 font-bold text-xs shadow transition-all cursor-pointer flex items-center gap-1.5 border border-amber-500/30"
-              title="Open CRM & Admin Panel"
-            >
-              <LayoutDashboard className="w-3.5 h-3.5 text-amber-400" />
-              <span>Admin CRM</span>
-            </button>
-
             {currentUser ? (
               <div className="flex items-center gap-2 bg-stone-100 hover:bg-stone-200 py-2 px-4 rounded-full text-xs font-bold text-slate-800 transition-colors">
-                <button
-                  onClick={() => openRoleDashboard(currentUser.roleId || 'buyer')}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <LayoutDashboard className="w-4 h-4 text-[#9e1b27]" />
-                  <span>{currentUser.name} ({currentUser.role})</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-[#9e1b27]" />
+                  <span>{currentUser.name}</span>
+                </div>
                 <button
                   onClick={handleLogout}
                   className="p-1 rounded-full text-slate-400 hover:text-red-600 transition-colors cursor-pointer ml-1"

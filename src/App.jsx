@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/Header';
 import { HeroSearchSection } from './components/HeroSearchSection';
@@ -17,28 +17,68 @@ import { CompareDrawer } from './components/CompareDrawer';
 import { TashiAIChatModal } from './components/TashiAIChatModal';
 import { BackToTop } from './components/BackToTop';
 import { Toast } from './components/Toast';
+
+// Admin & Staff Workspace
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { StaffLoginPortal } from './components/admin/StaffLoginPortal';
 
 const AppContent = () => {
-  const { isAdminView, setIsAdminView, currentUser } = useApp();
+  const { isAdminView, setIsAdminView, currentUser, setCurrentUser } = useApp();
 
+  // Listen for direct URL hashtag navigation (e.g. https://domain.com/#/admin)
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#/admin' || window.location.hash === '#admin') {
+        setIsAdminView(true);
+      }
+    };
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [setIsAdminView]);
+
+  const isStaff = currentUser && (
+    ['super_admin', 'admin', 'broker', 'agent', 'editor'].includes(currentUser.role) ||
+    currentUser.permissions?.includes('dashboard:read')
+  );
+
+  // -------------------------------------------------------------
+  // ISOLATED INTERNAL STAFF & CRM WORKSPACE (Unlisted Direct Route)
+  // -------------------------------------------------------------
   if (isAdminView) {
-    const canAccessAdmin = currentUser && (
-      ['super_admin', 'admin', 'broker', 'editor'].includes(currentUser.role) ||
-      currentUser.permissions?.includes('dashboard:read')
-    );
-    if (!canAccessAdmin) {
-      setIsAdminView(false);
-    } else {
+    if (!isStaff) {
       return (
-        <div className="min-h-screen bg-[#F4F6F9]">
-          <AdminDashboard onExitAdmin={() => setIsAdminView(false)} />
+        <div className="min-h-screen bg-[#0B132B]">
+          <StaffLoginPortal
+            onLoginSuccess={(staffUser) => {
+              setCurrentUser(staffUser);
+            }}
+            onBackToPublic={() => {
+              window.location.hash = '';
+              setIsAdminView(false);
+            }}
+          />
           <Toast />
         </div>
       );
     }
+
+    return (
+      <div className="min-h-screen bg-[#F4F6F9]">
+        <AdminDashboard
+          onExitAdmin={() => {
+            window.location.hash = '';
+            setIsAdminView(false);
+          }}
+        />
+        <Toast />
+      </div>
+    );
   }
 
+  // -------------------------------------------------------------
+  // PUBLIC-FACING CUSTOMER MARKETPLACE (Zero Admin Links)
+  // -------------------------------------------------------------
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#FAF8F5] text-slate-900 selection:bg-[#9e1b27] selection:text-white">
       {/* 1. Floating Capsule Header & Bhutan Ribbon */}
@@ -51,7 +91,7 @@ const AppContent = () => {
         {/* 3. Trust Bar (4 Value Proposition Pills) */}
         <TrustBar />
 
-        {/* 4. Access Your Dashboard (5 Role Access Cards) */}
+        {/* 4. Client & Investor Services (Public Services Grid) */}
         <DashboardAccessCards />
 
         {/* 5. Featured Properties (With Map View Toggle & Compare) */}
@@ -67,19 +107,15 @@ const AppContent = () => {
         <BottomCTA />
       </main>
 
-      {/* 9. Footer with Bhutanese Textile Ribbon */}
+      {/* 9. Full Footer */}
       <Footer />
 
-      {/* Floating Back to Top Button */}
+      {/* 10. Floating Interactive Drawers & Overlays */}
       <BackToTop />
-
-      {/* Floating Tashi AI Concierge Assistant */}
+      <CompareDrawer />
       <TashiAIChatModal />
 
-      {/* Floating Side-by-Side Compare Drawer */}
-      <CompareDrawer />
-
-      {/* Modals & Overlays */}
+      {/* 11. Customer Modals */}
       <RoleLoginModal />
       <RoleDashboardModal />
       <PropertyDetailModal />
