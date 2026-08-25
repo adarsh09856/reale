@@ -26,6 +26,9 @@ export const AppProvider = ({ children }) => {
   // View Mode: 'grid' | 'map'
   const [viewMode, setViewMode] = useState('grid');
 
+  // CRM Admin View Mode (matches reference screenshot)
+  const [isAdminView, setIsAdminView] = useState(false);
+
   const [properties, setProperties] = useState(FEATURED_PROPERTIES);
   const [vehicles, setVehicles] = useState(FEATURED_VEHICLES);
   const [favorites, setFavorites] = useState(() => {
@@ -237,6 +240,8 @@ export const AppProvider = ({ children }) => {
         toggleTheme,
         viewMode,
         setViewMode,
+        isAdminView,
+        setIsAdminView,
         properties,
         vehicles,
         favorites,

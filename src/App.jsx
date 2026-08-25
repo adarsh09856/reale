@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppProvider } from './context/AppContext';
+import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/Header';
 import { HeroSearchSection } from './components/HeroSearchSection';
 import { TrustBar } from './components/TrustBar';
@@ -17,8 +17,20 @@ import { CompareDrawer } from './components/CompareDrawer';
 import { TashiAIChatModal } from './components/TashiAIChatModal';
 import { BackToTop } from './components/BackToTop';
 import { Toast } from './components/Toast';
+import { AdminDashboard } from './components/admin/AdminDashboard';
 
 const AppContent = () => {
+  const { isAdminView, setIsAdminView } = useApp();
+
+  if (isAdminView) {
+    return (
+      <div className="min-h-screen bg-[#F4F6F9]">
+        <AdminDashboard onExitAdmin={() => setIsAdminView(false)} />
+        <Toast />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#FAF8F5] text-slate-900 selection:bg-[#9e1b27] selection:text-white">
       {/* 1. Floating Capsule Header & Bhutan Ribbon */}
