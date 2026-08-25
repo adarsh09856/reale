@@ -20,15 +20,23 @@ import { Toast } from './components/Toast';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 
 const AppContent = () => {
-  const { isAdminView, setIsAdminView } = useApp();
+  const { isAdminView, setIsAdminView, currentUser } = useApp();
 
   if (isAdminView) {
-    return (
-      <div className="min-h-screen bg-[#F4F6F9]">
-        <AdminDashboard onExitAdmin={() => setIsAdminView(false)} />
-        <Toast />
-      </div>
+    const canAccessAdmin = currentUser && (
+      ['super_admin', 'admin', 'broker', 'editor'].includes(currentUser.role) ||
+      currentUser.permissions?.includes('dashboard:read')
     );
+    if (!canAccessAdmin) {
+      setIsAdminView(false);
+    } else {
+      return (
+        <div className="min-h-screen bg-[#F4F6F9]">
+          <AdminDashboard onExitAdmin={() => setIsAdminView(false)} />
+          <Toast />
+        </div>
+      );
+    }
   }
 
   return (

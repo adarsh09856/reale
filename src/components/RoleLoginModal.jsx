@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { DASHBOARD_ROLES } from '../data/bhutanData';
 import { BhutanKnot } from './BhutanKnot';
-import { X, Lock, Mail, User, Phone, CheckCircle2 } from 'lucide-react';
+import { X, Lock, Mail, User, Phone, CheckCircle2, Loader2 } from 'lucide-react';
+import { api } from '../api/client';
 
 export const RoleLoginModal = () => {
   const { loginModal, closeRoleLogin, setCurrentUser, showToast } = useApp();
   const [isRegister, setIsRegister] = useState(loginModal.isRegister);
   const [selectedRole, setSelectedRole] = useState(loginModal.roleId || 'buyer');
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -20,36 +22,40 @@ export const RoleLoginModal = () => {
 
   const roleObj = DASHBOARD_ROLES.find(r => r.id === selectedRole) || DASHBOARD_ROLES[4];
 
-  const handleSubmit = (e) => {
+  // REAL API LOGIN CALL (Blocks on invalid credentials)
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
       showToast('Please enter your email and password', 'error');
       return;
     }
 
-    const user = {
-      name: formData.name || formData.email.split('@')[0],
-      email: formData.email,
-      role: roleObj.title,
-      roleId: selectedRole
-    };
-
-    setCurrentUser(user);
-    showToast(`Logged in successfully as ${roleObj.title}!`, 'success');
-    closeRoleLogin();
+    setLoading(true);
+    try {
+      const res = await api.login(formData.email, formData.password);
+      setCurrentUser(res.user);
+      showToast(`Welcome, ${res.user.name}! Authenticated as ${res.user.role}.`, 'success');
+      closeRoleLogin();
+    } catch (err) {
+      showToast(err.message || 'Invalid email or password.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDemoLogin = (roleId) => {
-    const r = DASHBOARD_ROLES.find(item => item.id === roleId);
-    const demoUser = {
-      name: roleId === 'admin' ? 'Dasho Tashi Dorji' : roleId === 'broker' ? 'Karma Wangchuk' : 'Sangay Pelden',
-      email: `${roleId}@jigmeestate.bt`,
-      role: r.title,
-      roleId: roleId
-    };
-    setCurrentUser(demoUser);
-    showToast(`Logged in as ${demoUser.name} (${r.title})`, 'success');
-    closeRoleLogin();
+  // Preset Real Seeded Logins (calls real backend API with verified hashes)
+  const handleQuickSeedLogin = async (email, password, label) => {
+    setLoading(true);
+    try {
+      const res = await api.login(email, password);
+      setCurrentUser(res.user);
+      showToast(`Logged in as ${res.user.name} (${label})`, 'success');
+      closeRoleLogin();
+    } catch (err) {
+      showToast(err.message || 'Login failed. Please check credentials.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -73,51 +79,17 @@ export const RoleLoginModal = () => {
             </div>
             <div>
               <h3 className="font-display font-bold text-lg text-white">
-                {isRegister ? 'Register Account' : `${roleObj.title} Access`}
+                {isRegister ? 'Register Account' : 'Sign In to Account'}
               </h3>
               <p className="text-xs text-stone-400">
-                {isRegister ? 'Join Bhutan’s certified real estate platform' : roleObj.description}
+                {isRegister ? 'Join Bhutan’s certified real estate platform' : 'Enter your registered credentials to access your dashboard'}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Role Selector Pills */}
-        <div className="p-4 bg-stone-50 border-b border-stone-200 flex gap-1.5 overflow-x-auto">
-          {DASHBOARD_ROLES.map(r => (
-            <button
-              key={r.id}
-              onClick={() => setSelectedRole(r.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
-                selectedRole === r.id
-                  ? 'bg-[#9e1b27] text-white shadow-xs'
-                  : 'bg-white text-slate-600 border border-stone-200 hover:bg-stone-100'
-              }`}
-            >
-              {r.title}
-            </button>
-          ))}
-        </div>
-
-        {/* Form */}
+        {/* Real Authenticated Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-3.5 text-xs">
-          {isRegister && (
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Full Name</label>
-              <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g. Karma Tshering"
-                  className="w-full pl-9 pr-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:border-[#9e1b27]"
-                  required
-                />
-              </div>
-            </div>
-          )}
-
           <div>
             <label className="block font-bold text-slate-700 mb-1">Email Address</label>
             <div className="relative">
@@ -126,7 +98,7 @@ export const RoleLoginModal = () => {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="name@druknet.bt"
+                placeholder="admin@jigme.bt"
                 className="w-full pl-9 pr-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:border-[#9e1b27]"
                 required
               />
@@ -141,7 +113,7 @@ export const RoleLoginModal = () => {
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="••••••••"
+                placeholder="Enter password..."
                 className="w-full pl-9 pr-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:border-[#9e1b27]"
                 required
               />
@@ -150,40 +122,19 @@ export const RoleLoginModal = () => {
 
           <button
             type="submit"
-            className="w-full py-2.5 bg-[#9e1b27] hover:bg-[#80131d] text-white font-bold rounded-xl shadow-md transition-all mt-2"
+            disabled={loading}
+            className="w-full mt-2 py-3 px-4 bg-[#9e1b27] hover:bg-[#80131d] disabled:bg-stone-400 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            {isRegister ? 'Complete Registration' : `Sign In as ${roleObj.title}`}
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Verifying credentials against database...</span>
+              </>
+            ) : (
+              <span>Authenticate & Sign In</span>
+            )}
           </button>
-
-          {/* 1-Click Fast Role Sign In */}
-          <div className="pt-3 border-t border-stone-200 text-center">
-            <p className="text-[10px] font-bold uppercase text-slate-400 mb-2">Or Quick 1-Click Role Login</p>
-            <div className="grid grid-cols-3 gap-1.5">
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('admin')}
-                className="p-1.5 rounded-lg border border-stone-200 text-[11px] font-bold text-[#9e1b27] hover:bg-rose-50"
-              >
-                👑 Admin
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('broker')}
-                className="p-1.5 rounded-lg border border-stone-200 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50"
-              >
-                💼 Broker
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('buyer')}
-                className="p-1.5 rounded-lg border border-stone-200 text-[11px] font-bold text-purple-700 hover:bg-purple-50"
-              >
-                👥 Buyer
-              </button>
-            </div>
-          </div>
         </form>
-
       </div>
     </div>
   );

@@ -1,0 +1,291 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. Users, Granular RBAC & Password Reset
+model User {
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  passwordHash        String
+  name                String
+  avatarUrl           String?
+  phone               String?
+  roleId              String
+  role                Role                 @relation(fields: [roleId], references: [id])
+  status              String               @default("ACTIVE") // ACTIVE, SUSPENDED
+  deletedAt           DateTime?            // Soft delete
+  lastLoginAt         DateTime?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  pages               Page[]
+  posts               Post[]
+  properties          Property[]
+  vehicles            Vehicle[]
+  assignedInquiries   Inquiry[]            @relation("AssignedAgent")
+  media               Media[]
+  activityLogs        ActivityLog[]
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique // super_admin, admin, broker, agent, editor, buyer
+  description String?
+  isSystem    Boolean          @default(false) // Safeguard against deleting system roles
+  permissions RolePermission[]
+  users       User[]
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  key         String           @unique // exact match e.g. "properties:edit"
+  description String?
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// 2. CMS Content (Versioned for Optimistic Concurrency + Soft Deletes)
+model Page {
+  id          String    @id @default(uuid())
+  title       String
+  slug        String    @unique
+  content     String
+  status      String    @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  version     Int       @default(1)       // Optimistic concurrency locking
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  seoMetaId   String?   @unique
+  seoMeta     SeoMeta?  @relation(fields: [seoMetaId], references: [id])
+  deletedAt   DateTime?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String
+  coverImage  String?
+  category    String    @default("General")
+  tags        String?
+  status      String    @default("DRAFT") // DRAFT, PUBLISHED
+  version     Int       @default(1)       // Optimistic concurrency locking
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  seoMetaId   String?   @unique
+  seoMeta     SeoMeta?  @relation(fields: [seoMetaId], references: [id])
+  deletedAt   DateTime?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Media {
+  id         String    @id @default(uuid())
+  fileName   String
+  fileUrl    String
+  mimeType   String
+  sizeBytes  Int
+  uploadedBy String
+  uploader   User      @relation(fields: [uploadedBy], references: [id])
+  deletedAt  DateTime? // 30-day retention before physical cleanup job
+  createdAt  DateTime  @default(now())
+}
+
+model Menu {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  location  String     @default("header")
+  version   Int        @default(1)       // Optimistic concurrency locking
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model MenuItem {
+  id        String     @id @default(uuid())
+  menuId    String
+  menu      Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    MenuItem?  @relation("MenuHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children  MenuItem[] @relation("MenuHierarchy")
+  label     String
+  url       String
+  type      String     @default("link")
+  order     Int        @default(0)
+}
+
+model Faq {
+  id            String    @id @default(uuid())
+  question      String
+  answer        String
+  category      String    @default("General")
+  generatedByAi Boolean   @default(false)
+  order         Int       @default(0)
+  deletedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// 3. CRM Marketplace Entities, Workflow & Lead Assignment
+model Property {
+  id           String    @id @default(uuid())
+  title        String
+  location     String
+  priceNu      Float
+  priceDisplay String
+  type         String
+  status       String    @default("PENDING_APPROVAL") // PENDING_APPROVAL, PUBLISHED, DRAFT, ARCHIVED
+  version      Int       @default(1)                  // Optimistic concurrency locking
+  beds         Int       @default(0)
+  baths        Int       @default(0)
+  area         String
+  description  String
+  image        String
+  verified     Boolean   @default(true)
+  createdById  String
+  createdBy    User      @relation(fields: [createdById], references: [id])
+  deletedAt    DateTime?
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Vehicle {
+  id           String    @id @default(uuid())
+  title        String
+  location     String
+  priceNu      Float
+  priceDisplay String
+  fuel         String
+  mileage      String
+  transmission String
+  status       String    @default("PENDING_APPROVAL") // PENDING_APPROVAL, PUBLISHED, DRAFT, ARCHIVED
+  version      Int       @default(1)                  // Optimistic concurrency locking
+  description  String
+  image        String
+  verified     Boolean   @default(true)
+  createdById  String
+  createdBy    User      @relation(fields: [createdById], references: [id])
+  deletedAt    DateTime?
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model BankRate {
+  id                    String   @id @default(uuid())
+  bankKey               String   @unique // bob, bnbl, bdbl, tbank
+  bankName              String
+  interestRate          Float    // e.g. 8.5
+  minDownPaymentPercent Float    @default(20.0)
+  maxTenureYears        Int      @default(30)
+  description           String?
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Inquiry {
+  id           String    @id @default(uuid())
+  type         String    @default("GENERAL") // GENERAL, PROPERTY, VEHICLE, TOUR
+  itemId       String?
+  name         String
+  email        String?
+  phone        String
+  message      String
+  status       String    @default("NEW")     // NEW, ASSIGNED, CONTACTED, QUALIFIED, CLOSED
+  source       String    @default("WEBSITE") // WEBSITE, WHATSAPP, WALK_IN, PHONE
+  assignedToId String?
+  assignedTo   User?     @relation("AssignedAgent", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedAt   DateTime?
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model SeoMeta {
+  id              String   @id @default(uuid())
+  metaTitle       String
+  metaDescription String
+  keywords        String?
+  score           Int      @default(85)
+  page            Page?
+  post            Post?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userName   String?
+  action     String   // CREATED_PAGE, PUBLISHED_PROPERTY, LEAD_ASSIGNED, USER_LOGIN, etc.
+  entityType String   // page, property, user, menu, media, inquiry
+  entityId   String?
+  details    String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+}
+
+model SocialConnection {
+  id          String   @id @default(uuid())
+  platform    String   @unique
+  accountName String?
+  status      String   @default("CONNECTED")
+  updatedAt   DateTime @updatedAt
+}
+
+model PartnerLink {
+  id        String    @id @default(uuid())
+  name      String
+  url       String
+  status    String    @default("ACTIVE") // ACTIVE, PENDING, REJECTED
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model VisitorLog {
+  id        String   @id @default(uuid())
+  ipHash    String?  // Anonymized SHA-256 hash for privacy
+  path      String   @default("/")
+  createdAt DateTime @default(now())
+}
