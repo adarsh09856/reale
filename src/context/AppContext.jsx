@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { FEATURED_PROPERTIES, FEATURED_VEHICLES } from '../data/bhutanData';
 import confetti from 'canvas-confetti';
+import { api } from '../api/client';
 
 const AppContext = createContext();
 
@@ -26,11 +27,76 @@ export const AppProvider = ({ children }) => {
   // View Mode: 'grid' | 'map'
   const [viewMode, setViewMode] = useState('grid');
 
-  // CRM Admin View Mode (matches reference screenshot)
+  // CRM Admin View Mode
   const [isAdminView, setIsAdminView] = useState(false);
 
+  // Data Collections (initialized with offline fallback, synced with live API)
   const [properties, setProperties] = useState(FEATURED_PROPERTIES);
   const [vehicles, setVehicles] = useState(FEATURED_VEHICLES);
+  const [loadingCatalog, setLoadingCatalog] = useState(true);
+
+  // Synchronize with Live Database API on Mount
+  useEffect(() => {
+    const fetchLiveCatalog = async () => {
+      try {
+        const [propsRes, vehsRes] = await Promise.allSettled([
+          api.getProperties(),
+          api.getVehicles()
+        ]);
+
+        if (propsRes.status === 'fulfilled' && propsRes.value?.properties?.length > 0) {
+          const liveProps = propsRes.value.properties.map(p => ({
+            id: p.id,
+            title: p.title,
+            location: p.location,
+            priceNu: p.priceNu,
+            priceDisplay: p.priceDisplay || `Nu. ${(p.priceNu / 10000000).toFixed(2)} Cr`,
+            type: p.type,
+            beds: p.beds || 3,
+            baths: p.baths || 2,
+            area: p.area || '15 Decimals',
+            description: p.description,
+            image: p.image,
+            images: p.images ? (typeof p.images === 'string' ? JSON.parse(p.images) : p.images) : [p.image],
+            featured: p.isFeatured || false,
+            verified: p.isVerified !== false,
+            lagthramNo: p.lagthramNo || 'THIM-2026-NLC',
+            plotNo: p.plotNo || 'PL-08',
+            thramHolder: p.thramHolder || 'Verified Landowner'
+          }));
+          setProperties(liveProps);
+        }
+
+        if (vehsRes.status === 'fulfilled' && vehsRes.value?.vehicles?.length > 0) {
+          const liveVehs = vehsRes.value.vehicles.map(v => ({
+            id: v.id,
+            title: v.title,
+            make: v.make,
+            model: v.model,
+            year: v.year,
+            priceNu: v.priceNu,
+            priceDisplay: v.priceDisplay || `Nu. ${(v.priceNu / 100000).toFixed(2)} Lakh`,
+            mileage: v.mileage,
+            fuelType: v.fuelType,
+            transmission: v.transmission,
+            location: v.location,
+            description: v.description,
+            image: v.image,
+            images: v.images ? (typeof v.images === 'string' ? JSON.parse(v.images) : v.images) : [v.image],
+            rstaVerified: v.isVerified !== false
+          }));
+          setVehicles(liveVehs);
+        }
+      } catch (err) {
+        console.warn('[AppContext Platform 2] API Sync:', err.message);
+      } finally {
+        setLoadingCatalog(false);
+      }
+    };
+
+    fetchLiveCatalog();
+  }, []);
+
   const [favorites, setFavorites] = useState(() => {
     try {
       const saved = localStorage.getItem('jigme_v2_favs');
@@ -184,39 +250,71 @@ export const AppProvider = ({ children }) => {
     setCompareModalOpen(false);
   };
 
-  const openRoleLogin = (roleId, isRegister = false) => {
-    setLoginModal({ isOpen: true, roleId, isRegister });
-    setMobileMenuOpen(false);
-  };
-
-  const closeRoleLogin = () => {
-    setLoginModal({ isOpen: false, roleId: null, isRegister: false });
-  };
-
-  const openRoleDashboard = (roleId) => {
-    setRoleDashboardModal({ isOpen: true, roleId });
-  };
-
-  const closeRoleDashboard = () => {
-    setRoleDashboardModal({ isOpen: false, roleId: null });
-  };
-
-  const openDetail = (item, type = 'property') => {
-    setDetailModal({ isOpen: true, item, type });
-  };
-
-  const closeDetail = () => {
-    setDetailModal({ isOpen: false, item: null, type: 'property' });
-  };
-
-  const toggleFavorite = (id, title) => {
+  const toggleFavorite = (id, title = 'Item') => {
     if (favorites.includes(id)) {
-      setFavorites(prev => prev.filter(f => f !== id));
+      setFavorites(prev => prev.filter(i => i !== id));
       showToast(`Removed "${title}" from favorites`, 'info');
     } else {
       setFavorites(prev => [...prev, id]);
-      showToast(`Saved "${title}" to favorites!`, 'success');
+      showToast(`Saved "${title}" to your favorites!`, 'success');
     }
+  };
+
+  const isFavorite = (id) => favorites.includes(id);
+
+  const openRoleLogin = (roleId = null, isRegister = false) => {
+    setLoginModal({
+      isOpen: true,
+      roleId,
+      isRegister
+    });
+  };
+
+  const closeRoleLogin = () => {
+    setLoginModal({
+      isOpen: false,
+      roleId: null,
+      isRegister: false
+    });
+  };
+
+  const openRoleDashboard = (roleId) => {
+    setRoleDashboardModal({
+      isOpen: true,
+      roleId
+    });
+  };
+
+  const closeRoleDashboard = () => {
+    setRoleDashboardModal({
+      isOpen: false,
+      roleId: null
+    });
+  };
+
+  const openDetailModal = (item, type = 'property') => {
+    setDetailModal({
+      isOpen: true,
+      item,
+      type
+    });
+  };
+
+  const closeDetailModal = () => {
+    setDetailModal({
+      isOpen: false,
+      item: null,
+      type: 'property'
+    });
+  };
+
+  const openCalculatorModal = () => setLoanCalculatorOpen(true);
+  const closeCalculatorModal = () => setLoanCalculatorOpen(false);
+
+  const handleLogout = () => {
+    api.logout();
+    setCurrentUser(null);
+    showToast('Signed out successfully', 'info');
   };
 
   return (
@@ -234,18 +332,20 @@ export const AppProvider = ({ children }) => {
         setBudget,
         currency,
         setCurrency,
-        formatCurrency,
         theme,
-        setTheme,
         toggleTheme,
         viewMode,
         setViewMode,
         isAdminView,
         setIsAdminView,
         properties,
+        setProperties,
         vehicles,
+        setVehicles,
+        loadingCatalog,
         favorites,
         toggleFavorite,
+        isFavorite,
         compareList,
         toggleCompare,
         clearCompare,
@@ -254,24 +354,27 @@ export const AppProvider = ({ children }) => {
         tashiAIOpen,
         setTashiAIOpen,
         loanCalculatorOpen,
-        setLoanCalculatorOpen,
+        openCalculatorModal,
+        closeCalculatorModal,
         loginModal,
         openRoleLogin,
         closeRoleLogin,
+        detailModal,
+        openDetailModal,
+        closeDetailModal,
         roleDashboardModal,
         openRoleDashboard,
         closeRoleDashboard,
-        detailModal,
-        openDetail,
-        closeDetail,
         currentUser,
         setCurrentUser,
         mobileMenuOpen,
         setMobileMenuOpen,
         toastMessage,
         showToast,
+        formatCurrency,
         handleSearch,
-        handlePopularSearch
+        handlePopularSearch,
+        handleLogout
       }}
     >
       {children}
