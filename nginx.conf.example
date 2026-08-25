@@ -1,19 +1,22 @@
 # =========================================================================
-# AAPANEL NGINX CONFIGURATION GUIDE
+# AAPANEL UNIFIED SINGLE-DOMAIN NGINX CONFIGURATION
+# =========================================================================
+# Domain: yourdomain.com (serves Frontend SPA, Admin Gate, and API on /api/v1)
+# One Domain • One SSL Certificate • Zero CORS Configuration Needed
 # =========================================================================
 
-# -------------------------------------------------------------------------
-# 1. Backend API Virtual Host (api.yourdomain.com)
-# -------------------------------------------------------------------------
 server {
     listen 80;
     listen 443 ssl http2;
-    server_name api.yourdomain.com;
+    server_name yourdomain.com www.yourdomain.com;
 
+    root /www/wwwroot/yourdomain.com/dist;
+    index index.html;
     client_max_body_size 50M;
 
-    location / {
-        proxy_pass http://127.0.0.1:5000;
+    # 1. Reverse Proxy API traffic directly to PM2 Node Backend
+    location /api/ {
+        proxy_pass http://127.0.0.1:5000/api/;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -23,26 +26,14 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
     }
-}
 
-# -------------------------------------------------------------------------
-# 2. Public Marketplace SPA Site (yourdomain.com & www.yourdomain.com)
-# -------------------------------------------------------------------------
-server {
-    listen 80;
-    listen 443 ssl http2;
-    server_name yourdomain.com www.yourdomain.com;
-
-    root /www/wwwroot/yourdomain.com/dist;
-    index index.html;
-
-    # Static Assets Caching
-    location ~* \.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$ {
+    # 2. Cache Static Assets (CSS, JS, WebP, Fonts)
+    location ~* \.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|webp)$ {
         expires 1y;
         add_header Cache-Control "public, no-transform";
     }
 
-    # SPA Routing Fallback (Prevents 404 on page refresh)
+    # 3. SPA Routing Fallback (Handles /, /#admin, /admin without 404s)
     location / {
         try_files $uri $uri/ /index.html;
     }

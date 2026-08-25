@@ -1,6 +1,15 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL 
-  ? (import.meta.env.VITE_API_URL.endsWith('/api/v1') ? import.meta.env.VITE_API_URL : `${import.meta.env.VITE_API_URL}/api/v1`)
-  : 'http://localhost:5000/api/v1';
+const resolveApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    const url = import.meta.env.VITE_API_URL.trim();
+    return url.endsWith('/api/v1') ? url : `${url}/api/v1`;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return '/api/v1'; // Single-domain same-origin Nginx proxy
+  }
+  return 'http://localhost:5000/api/v1';
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 class ApiClient {
   constructor() {
